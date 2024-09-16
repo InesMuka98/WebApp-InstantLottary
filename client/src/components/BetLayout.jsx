@@ -7,8 +7,6 @@ import dayjs from 'dayjs';
 
 export function BetLayout(props) {
   const [message, setMessage] = useState(null);
-  //const [timeLeft, setTimeLeft] = useState(0);
-  //const [betClosed, setBetClosed] = useState(false);
   const [points, setPoints] = useState(0);  
 
   useEffect(() => {
@@ -31,7 +29,7 @@ export function BetLayout(props) {
           props.draw ? (
             <>
             <p>Last draw: {props.draw.draw_numbers} on {props.draw.draw_timestamp.format('YYYY-MM-DD HH:mm:ss')}</p>
-            <p>{props.user.name}, you have only {points} left</p>
+            <p>{props.user.name}, you have only {points} points left</p>
             {props.betClosed ? (
                 <p>Bets are closed for this draw. Wait for the next draw...</p>
             ):(
@@ -107,22 +105,3 @@ export function BetForm(props) {
  </Row>
 );
 }
-
-/*
-export function CountdownTimer(props){
-    const [timeLeft, setTimeLeft] = useState(getTimeLeft());
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            setTimeLeft(getTimeLeft());
-        }, 1000);
-        return () => clearInterval(timerId);
-    }, [props.draw.draw_timestamp]);
-
-    function getTimeLeft(){
-        const now = dayjs();
-        const drawTime = dayjs(props.draw.draw_timestamp);
-        const timeLeft = drawTime.diff(now, 'second');
-        return timeLeft;
-    }
-    return <p>Time left to place your bet: {timeLeft} seconds</p>;
-}*/

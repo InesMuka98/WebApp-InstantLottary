@@ -25,9 +25,12 @@ function App() {
     let lastDrawTime = null;
 
     const getLastCompletedDraw = async () => {
-        await API.getDraws()
-        .then(draw => {setDraw(draw)})
-        .catch(err => console.error('Error fetching draws:', err));
+      try{
+        const lastDraw = await API.getDraws();
+        setDraw(lastDraw);
+      }catch(err) {
+        console.error('Error fetching last draw:', err);
+      }
     };
 
     const calculateTimeLeft = async () => {
