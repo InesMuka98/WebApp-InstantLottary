@@ -33,33 +33,36 @@ function App() {
       }
     };
 
+    const refetchLastCompletedDrawAndTimestamp = async () => {
+      try{
+        lastDrawTime = await API.getLastDrawTimestamp();
+        await getLastCompletedDraw();;
+      }
+      catch(err) {
+        console.error('Error fetching timestamp or draw:', err);
+      }
+    };
     const calculateTimeLeft = async () => {
       const now =dayjs();
       const elapsedTime = now.diff(lastDrawTime, 'second');
       const countdown = Math.max(120 - elapsedTime, 0);
       setTimeLeft(countdown);
 
-      if (countdown <= 0) {
+      if (countdown === 0) {
         setBetClosed(true);
-        refetchDrawTime();
-        refetchLastCompletedDraw();
+        setTimeout(refetchLastCompletedDrawAndTimestamp,1000);
+      }
+      else if (countdown < 0) {
+        setBetClosed(true);
       }
       else {
         setBetClosed(false);
       }
     };
 
-    const refetchLastCompletedDraw = async () => {
-        await getLastCompletedDraw();
-    };
-
-    const refetchDrawTime = async () => {
-        lastDrawTime = await API.getLastDrawTimestamp();
-    };
     const startCountDown = async () => {
-        lastDrawTime = await API.getLastDrawTimestamp();
+        await refetchLastCompletedDrawAndTimestamp();
         calculateTimeLeft();
-        await getLastCompletedDraw();
         
         const interval = setInterval(() => {
         calculateTimeLeft();
