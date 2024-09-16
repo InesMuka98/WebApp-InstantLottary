@@ -17,64 +17,8 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false); // NEW
   const [message, setMessage] = useState(''); // NEW
   const [user, setUser] = useState(''); // NEW
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [betClosed, setBetClosed] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    let lastDrawTime = null;
-
-    const getLastCompletedDraw = async () => {
-      try{
-        const lastDraw = await API.getDraws();
-        setDraw(lastDraw);
-      }catch(err) {
-        console.error('Error fetching last draw:', err);
-      }
-    };
-
-    const refetchLastCompletedDrawAndTimestamp = async () => {
-      try{
-        lastDrawTime = await API.getLastDrawTimestamp();
-        await getLastCompletedDraw();;
-      }
-      catch(err) {
-        console.error('Error fetching timestamp or draw:', err);
-      }
-    };
-    const calculateTimeLeft = async () => {
-      const now =dayjs();
-      const elapsedTime = now.diff(lastDrawTime, 'second');
-      const countdown = Math.max(120 - elapsedTime, 0);
-      setTimeLeft(countdown);
-
-      if (countdown === 0) {
-        setBetClosed(true);
-        setTimeout(refetchLastCompletedDrawAndTimestamp,1000);
-      }
-      else if (countdown < 0) {
-        setBetClosed(true);
-      }
-      else {
-        setBetClosed(false);
-      }
-    };
-
-    const startCountDown = async () => {
-        await refetchLastCompletedDrawAndTimestamp();
-        calculateTimeLeft();
-        
-        const interval = setInterval(() => {
-        calculateTimeLeft();
-        },1000);
-
-        return () => clearInterval(interval);
-    };
-    if (location.pathname === '/draws' || location.pathname === '/draws/bet'){
-    startCountDown();}
-    }, [location.pathname]);
-
-/*
   useEffect(() => {
     // get latest draw froms server
     const getDraw = async () => {
@@ -96,7 +40,7 @@ function App() {
     return () => clearInterval(intervalId);
     }
   }, [location.pathname]);
-*/
+
   // NEW
   useEffect(() => {
     const checkAuth = async () => {
@@ -153,7 +97,7 @@ function App() {
           <DrawLayout draw={draw} loggedIn={loggedIn}/>
         }/>
         <Route path="/draws/bet" element={
-          <BetLayout draw={draw} timeLeft={timeLeft} betClosed={betClosed} loggedIn={loggedIn} user={user}/>
+          <BetLayout draw={draw} loggedIn={loggedIn} user={user}/>
         }/>
         <Route path="/ranking" element={
           <RankingLayout loggedIn={loggedIn}/>

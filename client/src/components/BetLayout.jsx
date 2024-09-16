@@ -7,7 +7,46 @@ import dayjs from 'dayjs';
 
 export function BetLayout(props) {
   const [message, setMessage] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [betClosed, setBetClosed] = useState(false);
   const [points, setPoints] = useState(0);  
+
+  useEffect(() => {
+    let drawTime = null; // Store the draw time globally within the effect
+  
+    const calculateTimeLeft = () => {
+      const now = dayjs();
+      const elapsedTime = now.diff(drawTime, 'second');
+      const countdown = Math.max(120 - elapsedTime, 0); // 2 minutes countdown
+      setTimeLeft(countdown);
+  
+      if (countdown <= 0) {
+        setBetClosed(true);
+        refetchDrawTime(); // When countdown reaches 0, refetch the draw time
+      } else {
+        setBetClosed(false);
+      }
+    };
+  
+    const refetchDrawTime = async () => {
+      drawTime = await API.getLastDrawTimestamp(); // Refetch the timestamp once countdown reaches 0
+    };
+  
+    const startCountdown = async () => {
+      drawTime = await API.getLastDrawTimestamp(); // Fetch the timestamp once when component mounts
+      calculateTimeLeft(); // Start the countdown immediately
+  
+      const interval = setInterval(() => {
+        calculateTimeLeft();
+      }, 1000); // Update the countdown every second
+  
+      return () => clearInterval(interval); // Cleanup the interval on unmount
+    };
+  
+    startCountdown(); // Trigger the initial draw fetch and countdown
+  
+  }, []);
+
 
   useEffect(() => {
     const getPoints = async () => {
@@ -30,10 +69,10 @@ export function BetLayout(props) {
             <>
             <p>Last draw: {props.draw.draw_numbers} on {props.draw.draw_timestamp.format('YYYY-MM-DD HH:mm:ss')}</p>
             <p>{props.user.name}, you have only {points} points left</p>
-            {props.betClosed ? (
+            {betClosed ? (
                 <p>Bets are closed for this draw. Wait for the next draw...</p>
             ):(
-                <p>Time left to place your bet: {Math.floor(props.timeLeft / 60)}:{String(props.timeLeft % 60).padStart(2, '0')} minutes</p>
+                <p>Time left to place your bet: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')} minutes</p>
             )}
             {/* Display the message */}
             {message && (
