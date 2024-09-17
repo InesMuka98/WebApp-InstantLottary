@@ -51,7 +51,7 @@ export const getBetForDraw = (userId, drawId) => {
 export const calculatePointsWon = (betNumbersLength, correctGuessesLength, pointsSpent) => {
     let pointsWon = 0;
     pointsWon= 2*pointsSpent*correctGuessesLength/betNumbersLength;
-    console.log('Points won:', pointsWon);
+    //console.log('Points won:', pointsWon);
     return pointsWon;
 }
 
