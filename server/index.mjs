@@ -136,7 +136,7 @@ app.post('/api/bet', isLoggedIn, [
     //check if bet already placed for that draw
     const bet = await getBetForDraw(userId, drawId);
     if (bet) {
-      console.log('Bet already placed for this draw');
+      //console.log('Bet already placed for this draw');
       return res.status(400).json({ error: 'Bet already placed for this draw' });
     }
 
