@@ -6,21 +6,23 @@ export function DrawLayout(props) {
     <>
       <Row>
         <Col>
-          <h1>Ready to play</h1>
+        {props.loggedIn && <h2 className="text-secondary text-center">One step closer <span className="badge text-bg-secondary">{props.user.name}</span> ... </h2>}
         </Col>
       </Row>
       <Row>
         {props.loggedIn ? (
           props.draw ? (
             <>
-            <p>Last draw: {props.draw.draw_numbers} on {props.draw.draw_timestamp.format('YYYY-MM-DD HH:mm:ss')}</p>
-            <p>{props.loggedIn && <Link className='btn btn-primary mx-1 ' to={`bet`}>Bet now</Link>}</p>
+            <div className="text-center">
+            <p className="fs-6">Last draw: <span className="fs-4 badge text-bg-secondary">{props.draw.draw_numbers}</span> on {props.draw.draw_timestamp.format('YYYY-MM-DD HH:mm:ss')}</p>
+            </div>
+            <p>{props.loggedIn && <div className="d-grid gap-2 col-6 mx-auto"><Link className="btn btn-lg btn-primary" to={`bet`}>Bet Now</Link></div>}</p>
             </>
           ) : (
-            <p>No draw available yet. Please wait for the next draw.</p>
+            <p className="fs-6 text-warning">No draw available yet. Please wait for the next draw.</p>
           )
         ) : (
-          <p>Please log in to see the latest draw.</p>
+          <h3 className="fs-6 text-danger">Please log in to play!</h3>
         )}  
       </Row>
     </>

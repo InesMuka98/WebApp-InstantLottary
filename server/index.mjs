@@ -147,7 +147,9 @@ app.post('/api/bet', isLoggedIn, [
     //console.log('Bet numbers:', betNumbers);
     //console.log('user.points', user);
     const correctGuesses = betNumbers.filter(num => winningNumbersArray.includes(num)).length;
-    const pointsWon = calculatePointsWon(correctGuesses);
+    //console.log('Correct guesses:', correctGuesses);
+    //console.log('bet numbers:', betNumbers.length);
+    const pointsWon = calculatePointsWon(betNumbers.length, correctGuesses, pointsSpent);
     try{
       await placeBetAndUpdatePoints(userId, user.points, drawId, betNumbers, pointsSpent, correctGuesses, pointsWon, betTimestamp);
       res.status(200).json({ success: true, points: user.points - pointsSpent });

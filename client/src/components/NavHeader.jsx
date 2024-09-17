@@ -2,15 +2,18 @@ import { Container, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { LogoutButton } from './AuthComponents';
 
-// UPDATED
 function NavHeader (props) {
   return(
-    <Navbar bg='primary' data-bs-theme='dark'>
+    <Navbar navbar-expand-lg='true' bg='primary' data-bs-theme='dark'>
       <Container fluid>
         <Link to='/' className='navbar-brand'>Instant Lottery</Link>
-        {/* NEW */}
         {props.loggedIn ? 
-          <LogoutButton logout={props.handleLogout} /> :
+          <>
+          <div className="d-inline-flex gap-2">
+          <Link to='/ranking'className='btn btn-outline-light'>Ranking</Link>
+          <LogoutButton logout={props.handleLogout}/>
+          </div>
+          </>:
           <Link to='/login'className='btn btn-outline-light'>Login</Link>
         }
       </Container>

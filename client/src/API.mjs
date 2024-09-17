@@ -92,7 +92,6 @@ const logIn = async (credentials) => {
       credentials: 'include'
     });
     const result = await response.json();
-    //console.log('saveBet result:', result);
     if (!response.ok) {
       throw new Error(result.error);
     }

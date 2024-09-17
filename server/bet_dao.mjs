@@ -48,36 +48,25 @@ export const getBetForDraw = (userId, drawId) => {
     });
 }
 
-export const calculatePointsWon = (correctGuesses) => {
+export const calculatePointsWon = (betNumbersLength, correctGuessesLength, pointsSpent) => {
     let pointsWon = 0;
-    switch(correctGuesses){
-        case 1:
-            pointsWon =10
-            break;
-        case 2:
-            pointsWon = 50;
-            break;
-        case 3:
-            pointsWon = 100;
-            break;
-        default:
-            pointsWon = 0;
-    }
+    pointsWon= 2*pointsSpent*correctGuessesLength/betNumbersLength;
+    console.log('Points won:', pointsWon);
     return pointsWon;
 }
 
 export const placeBetAndUpdatePoints = async (userId, userPoints, drawId, betNumbers, pointsSpent, correctGuesses, pointsWon, betTimestamp) => {
     return new Promise(async (resolve, reject) => {
         try{
-            await db.run('BEGIN TRANSACTION');
-            const result =await saveBet(userId, drawId, betNumbers, pointsSpent, correctGuesses, pointsWon, betTimestamp);
+            db.run('BEGIN TRANSACTION');
+            const result = await saveBet(userId, drawId, betNumbers, pointsSpent, correctGuesses, pointsWon, betTimestamp);
             const newPoints = userPoints - pointsSpent + pointsWon;
             await updateUserPoints(userId, newPoints);
-            await db.run('COMMIT');
+            db.run('COMMIT');
             resolve(result);
         }
         catch(err){
-            await db.run('ROLLBACK');
+            db.run('ROLLBACK');
             reject(err);
         }
     });

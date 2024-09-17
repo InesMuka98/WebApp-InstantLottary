@@ -16,11 +16,17 @@ function LoginForm(props) {
   };
 
   return (
+    <>
     <Row>
+      <Col>
+      <h2 className="text-secondary text-center">Log In</h2>
+      </Col>   
+    </Row>
+    <Row className="justify-content-center">
       <Col md={6}>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId='username' className='mb-3'>
-              <Form.Label>email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
           </Form.Group>
 
@@ -34,12 +40,13 @@ function LoginForm(props) {
       </Form>
     </Col>
   </Row>
+  </>
   )
 };
 
 function LogoutButton(props) {
   return(
-    <Button variant='outline-light' onClick={props.logout}>Logout</Button>
+    <Button className='btn btn-outline-light' onClick={props.logout}>Logout</Button>
   )
 }
 

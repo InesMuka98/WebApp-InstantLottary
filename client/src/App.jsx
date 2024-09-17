@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import { Container, Row, Alert } from 'react-bootstrap';
 import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
@@ -88,7 +88,6 @@ function App() {
         {/* UPDATED */}
         <NavHeader loggedIn={loggedIn} handleLogout={handleLogout} />
         <Container fluid className='mt-3'>
-          {/* NEW */}
           {message && <Row>
             <Alert variant={message.type} onClose={() => setMessage('')} dismissible>{message.msg}</Alert>
           </Row> }
@@ -105,7 +104,7 @@ function App() {
           loggedIn ? <Navigate replace to='/' /> : <LoginForm login={handleLogin} />
         } />
         <Route path="/draws" element={
-          <DrawLayout draw={draw} loggedIn={loggedIn}/>
+          <DrawLayout draw={draw} loggedIn={loggedIn} user={user}/>
         }/>
         <Route path="/draws/bet" element={
           <BetLayout draw={draw} loggedIn={loggedIn} location={location} user={user}/>
