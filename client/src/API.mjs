@@ -24,28 +24,26 @@ const logIn = async (credentials) => {
   // NEW
   const getUserInfo = async () => {
     const response = await fetch(SERVER_URL + '/api/sessions/current', {
-      credentials: 'include',
+      credentials: 'include'
     });
     const user = await response.json();
     if (response.ok) {
       return user;
     } else {
-      throw user;  // an object with the error coming from the server
+      throw user; 
     }
   };
   
   const getPoints = async (userId) => {
     const response = await fetch(SERVER_URL + `/api/points?userId=${userId}`,{
-      method: 'GET',
-      credentials: 'include',
+      credentials: 'include'
     });
-    
+    const result = await response.json();
     if(response.ok) {
-      const rankingJson = await response.json();
-      return rankingJson.points;
+      return result.points;
     }
     else
-      throw new Error('Internal server error');
+      throw new Error(result.error);
   };
   
   // NEW
@@ -59,23 +57,27 @@ const logIn = async (credentials) => {
   }
   
   const getDraws = async () => {
-    const response = await fetch(SERVER_URL + '/api/draws');
+    const response = await fetch(SERVER_URL + '/api/draws',{
+      credentials: 'include'
+    });
+    const result = await response.json();
     if(response.ok) {
-      const drawJson = await response.json();
-      return new Draw(drawJson.id, drawJson.draw_numbers, drawJson.draw_timestamp);
+      return new Draw(result.id, result.draw_numbers, result.draw_timestamp);
     }
     else
-      throw new Error('Internal server error');
+      throw new Error(result.error);
   }
 
   const getLastDrawTimestamp = async () => {
-    const response = await fetch(SERVER_URL + '/api/lastDrawTimestamp');
+    const response = await fetch(SERVER_URL + '/api/lastDrawTimestamp',{
+      credentials: 'include'
+    });
+    const result = await response.json();
     if(response.ok) {
-      const drawJson = await response.json();
-      return drawJson.drawTimestamp;
+      return result.drawTimestamp;
     }
     else
-      throw new Error('Internal server error');
+      throw new Error(result.error);
   }
 
   
@@ -86,26 +88,28 @@ const logIn = async (credentials) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(bet)
+      body: JSON.stringify(bet),
+      credentials: 'include'
     });
     const result = await response.json();
-    console.log('saveBet result:', result);
+    //console.log('saveBet result:', result);
     if (!response.ok) {
-      throw new Error(result.error || 'Failed to place the bet');
+      throw new Error(result.error);
     }
-    
     return result;
   };
 
   const getRanking = async () => {
-    const response = await fetch(SERVER_URL + '/api/ranking');
+    const response = await fetch(SERVER_URL + '/api/ranking',{
+      credentials: 'include'
+    });
+    const preResult = await response.json();
     if(response.ok) {
-      const rankingJson = await response.json();
-      const result= rankingJson.map(u => new ConstrictedInfoUser(u.id, u.name, u.points));
+      const result= preResult.map(u => new ConstrictedInfoUser(u.id, u.name, u.points));
       return result
     }
     else
-      throw new Error('Internal server error');
+      throw new Error(preResult.error);
   }
 
   const API = {logIn, logOut, getUserInfo, getDraws, getLastDrawTimestamp, saveBet, getRanking, getPoints};

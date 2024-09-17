@@ -2,10 +2,12 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import {check, validationResult} from 'express-validator';
 import {getUser, getUserById, listRankedUsers, getPoints} from './user-dao.mjs';
 import {getCurrentDraw, getLastCompletedDraw} from './draw_dao.mjs';
 import { generateAndStoreDraw } from './draw_dao.mjs'; 
 import { calculatePointsSpent, getBetForDraw, calculatePointsWon, placeBetAndUpdatePoints } from './bet_dao.mjs'; 
+import dayjs from 'dayjs';
 
 // Passport-related imports -- NEW
 import passport from 'passport';
@@ -74,7 +76,7 @@ setInterval(async () => {
 
 
 // GET /api/draws
-app.get('/api/draws', (request, response) => {
+app.get('/api/draws', isLoggedIn, (request, response) => {
   getLastCompletedDraw()
   .then(draws => {
     if(draws)
@@ -85,7 +87,7 @@ app.get('/api/draws', (request, response) => {
   .catch(() => response.status(500).end());
 });
 
-app.get('/api/lastDrawTimestamp', (request, response) => {
+app.get('/api/lastDrawTimestamp', isLoggedIn, (request, response) => {
   getCurrentDraw()
   .then(draws => {
     if(draws)
@@ -96,9 +98,25 @@ app.get('/api/lastDrawTimestamp', (request, response) => {
   .catch(() => response.status(500).end());
 });
 
-app.post('/api/bet', async (req, res) => {
-  const { userId, drawId, betNumbers, betTimestamp} = req.body;
-    console.log('Received bet submission:', { userId, drawId, betNumbers, betTimestamp });
+app.post('/api/bet', isLoggedIn, [
+  check('userId').notEmpty().withMessage('userId is required'),
+  check('drawId').notEmpty().withMessage('drawId is required'),
+  check('betNumbers').isArray().withMessage('betNumbers must be an array'),
+  check('betTimestamp').custom((value) => {
+    // Use dayjs to check if the format is correct
+    if (!dayjs(value, 'YYYY-MM-DD HH:mm:ss', true).isValid()) {
+      throw new Error('betTimestamp must be a valid date in the format YYYY-MM-DD HH:mm:ss');
+    }
+    return true;
+  })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array()});
+    }
+
+    const { userId, drawId, betNumbers, betTimestamp} = req.body;
+    //console.log('Received bet submission:', { userId, drawId, betNumbers, betTimestamp });
 
     // 1. Get the player's current points
     const user = await getUserById(userId);
@@ -124,10 +142,10 @@ app.post('/api/bet', async (req, res) => {
 
     const winningNumbers = currentDraw.draw_numbers;
     const winningNumbersArray = winningNumbers.split(',').map(num => parseInt(num));  
-    console.log('Winning numbers:', winningNumbers);
-    console.log('Winning numbers array', winningNumbersArray);
-    console.log('Bet numbers:', betNumbers);
-    console.log('user.points', user);
+    //console.log('Winning numbers:', winningNumbers);
+    //console.log('Winning numbers array', winningNumbersArray);
+    //console.log('Bet numbers:', betNumbers);
+    //console.log('user.points', user);
     const correctGuesses = betNumbers.filter(num => winningNumbersArray.includes(num)).length;
     const pointsWon = calculatePointsWon(correctGuesses);
     try{
@@ -140,14 +158,14 @@ app.post('/api/bet', async (req, res) => {
   }
 );
 
-app.get('/api/ranking', (request, response) => {
+app.get('/api/ranking', isLoggedIn, (request, response) => {
   listRankedUsers()
   .then(rankedUsers => response.json(rankedUsers))
   .catch(() => response.status(500).end());
 });
 
 
-app.get('/api/points', (request, response) => {
+app.get('/api/points', isLoggedIn, (request, response) => {
   const {userId} = request.query;
   getPoints(userId)
   .then(user => {
