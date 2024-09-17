@@ -86,7 +86,6 @@ export const listRankedUsers = () => {
         reject(err);
       else {
         const rankedUsers = rows.map((u) => new ConstrictedInfoUser(u.id, u.name, u.points));
-        console.log('ranked users:',rankedUsers)
         resolve(rankedUsers);
       }
     });

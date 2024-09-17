@@ -7,9 +7,9 @@ import NotFound from './components/NotFoundComponent';
 import { LoginForm } from './components/AuthComponents';
 import { WelcomeLayout } from './components/WelcomeComponent';
 import API from './API.mjs';
-import { DrawLayout } from './components/DrawLayout';
-import { BetLayout } from './components/BetLayout';
-import { RankingLayout } from './components/RankingLayout';
+import { DrawLayout } from './components/DrawComponent';
+import { BetLayout } from './components/BetComponent';
+import { RankingLayout } from './components/RankingComponent';
 import dayjs from 'dayjs';
 
 function App() {
@@ -44,9 +44,20 @@ function App() {
   // NEW
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await API.getUserInfo(); // we have the user info here
-      setLoggedIn(true);
-      setUser(user);
+      try{
+        const user = await API.getUserInfo(); // we have the user info here
+        if(user){
+          setLoggedIn(true);
+          setUser(user);
+        }
+        else{
+          setLoggedIn(false);
+          setUser('');
+        }
+      }
+      catch(err) {
+        console.error('Error checking authentication:', err);
+      }
     };
     checkAuth();
   }, []);
@@ -97,7 +108,7 @@ function App() {
           <DrawLayout draw={draw} loggedIn={loggedIn}/>
         }/>
         <Route path="/draws/bet" element={
-          <BetLayout draw={draw} loggedIn={loggedIn} user={user}/>
+          <BetLayout draw={draw} loggedIn={loggedIn} location={location} user={user}/>
         }/>
         <Route path="/ranking" element={
           <RankingLayout loggedIn={loggedIn}/>

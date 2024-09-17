@@ -42,9 +42,9 @@ export function BetLayout(props) {
   
       return () => clearInterval(interval); // Cleanup the interval on unmount
     };
-  
-    startCountdown(); // Trigger the initial draw fetch and countdown
-  
+    if (props.location.pathname === '/draws/bet'){
+        startCountdown(); // Trigger the initial draw fetch and countdown
+    }
   }, []);
 
 
