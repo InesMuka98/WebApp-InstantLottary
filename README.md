@@ -92,9 +92,21 @@ Another point on the Client side is the .css file `(.src/styles/bootstrap.min.cs
 
 ## Screenshots
 
-![Screenshot1](./img/screenshot.jpg)
+![Screenshot1](./img/welcomepage.JPG)
 
-![Screenshot2](./img/screenshot.jpg)
+![Screenshot2](./img/welcomepageloggedin.JPG)
+
+![Screenshot2](./img/drawpage.JPG)
+
+![Screenshot2](./img/betpage.JPG)
+
+![Screenshot2](./img/betplacedsuccessfully.JPG)
+
+![Screenshot2](./img/betrefused.JPG)
+
+![Screenshot2](./img/rankingpage.JPG)
+
+![Screenshot2](./img/loggingoutdenyingaccess.JPG)
 
 
 ## Users Credentials
