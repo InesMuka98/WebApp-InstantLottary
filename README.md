@@ -1,7 +1,4 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/1Xsnbbtx)
-# Exam #3: "Instant Lottary"
-## Student: s314051 MUKA INES 
-
+# Instant Lottary
 ## React Client Application Routes
 
 - Route `/`: Welcome page. This serves as an entry point to our web application. It welcomes the users and displays the game rules at all time. From here the user can access the login page by clicking on the button 'Login' on the navbar. Once the user is authenticated it returns to this page where a welcoming message with the user name is displayed and it can navigate to the page displaying the last completed draw by clicking on the button 'Play' or it can access the Ranking page by clicking the button 'Ranking' on the navbar. Close to it now the 'Login' button has changed to 'LogOut' that logs you out on click. Instead if the user is not logged in the page indicates you can not play if not logged in
